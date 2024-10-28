@@ -1,0 +1,40 @@
+name: Main
+
+on:
+  schedule:
+    - cron: '1 1 * * *'
+
+jobs:
+  make-contribution:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Make daily contribution
+        run: |
+          echo "$(date)" >> howto.md
+          echo " ------------------------------- " >> howto.md
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: "yemovir"
+          author_email: "abdulkarimalabri@gmail.com"
+          message: "test"
+          add: "howto.md"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: daily-contribution
+          # Set the Git credentials - replace this with your own secrets
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: "test"
+          commit-message: "test"
+          branch: daily-contribution
+          base: main
+          body: "test."
+          token: ${{ secrets.GITHUB_TOKEN }}
